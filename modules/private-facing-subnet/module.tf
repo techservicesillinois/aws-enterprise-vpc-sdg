@@ -143,7 +143,7 @@ output "cidr_block" {
 ## Resources
 
 module "subnet" {
-  source = "git::https://github.com/techservicesillinois/aws-enterprise-vpc.git//modules/subnet-common?ref=v0.11"
+  source = "../subnet-common"
 
   vpc_id                          = var.vpc_id
   name                            = var.name
