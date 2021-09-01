@@ -430,6 +430,7 @@ module "public-facing-subnet" {
   for_each = { for k,v in local.subnet_details: k=>v if v.type == "public" }
 
   tags              = var.tags
+  tags_subnet       = { Tier = each.value.type, SubnetType = each.value.type }
   name              = "${var.vpc_short_name}-${each.key}"
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
@@ -449,6 +450,7 @@ module "campus-facing-subnet" {
   for_each = { for k,v in local.subnet_details: k=>v if v.type == "campus" }
 
   tags              = var.tags
+  tags_subnet       = { Tier = each.value.type, SubnetType = each.value.type }
   name              = "${var.vpc_short_name}-${each.key}"
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
@@ -470,6 +472,7 @@ module "private-facing-subnet" {
   for_each = { for k,v in local.subnet_details: k=>v if v.type == "private" }
 
   tags              = var.tags
+  tags_subnet       = { Tier = each.value.type, SubnetType = each.value.type }
   name              = "${var.vpc_short_name}-${each.key}"
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
