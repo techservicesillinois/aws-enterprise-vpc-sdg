@@ -20,6 +20,9 @@ terraform {
     }
   }
 
+  # README: Must opt in to optional attributes experimental feature.
+  experiments = [module_variable_optional_attrs]
+
   # see backend.tf for remote state configuration
 }
 
@@ -59,7 +62,11 @@ variable "assign_ipv6_address_on_creation" {
 
 variable "subnets_by_availability_zone_suffix" {
   description = "Maps availability zone suffix (e.g. 'a' for us-east-2a) to subnet key to subnet details"
-  type        = map
+  type = map(map(object({
+        type         = string
+        cidr_block   = string
+        tags_subnet  = optional(map(string))
+      })))
 }
 
 variable "use_transit_gateway" {
@@ -418,6 +425,7 @@ locals {
       cidr_block        = d.cidr_block
       # e.g. xx03::/64 for ipv6_index=3, or null if not using IPv6
       ipv6_cidr_block   = try(cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 64 - split("/",aws_vpc.vpc.ipv6_cidr_block)[1], d.ipv6_index), null)
+      tags_subnet       = lookup(d, "tags_subnet", {})
     }
   }]...)
 
@@ -430,7 +438,7 @@ module "public-facing-subnet" {
   for_each = { for k,v in local.subnet_details: k=>v if v.type == "public" }
 
   tags              = var.tags
-  tags_subnet       = { Tier = each.value.type, SubnetType = each.value.type }
+  tags_subnet       = each.value.tags_subnet
   name              = "${var.vpc_short_name}-${each.key}"
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
@@ -450,7 +458,7 @@ module "campus-facing-subnet" {
   for_each = { for k,v in local.subnet_details: k=>v if v.type == "campus" }
 
   tags              = var.tags
-  tags_subnet       = { Tier = each.value.type, SubnetType = each.value.type }
+  tags_subnet       = each.value.tags_subnet
   name              = "${var.vpc_short_name}-${each.key}"
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
@@ -472,7 +480,7 @@ module "private-facing-subnet" {
   for_each = { for k,v in local.subnet_details: k=>v if v.type == "private" }
 
   tags              = var.tags
-  tags_subnet       = { Tier = each.value.type, SubnetType = each.value.type }
+  tags_subnet       = each.value.tags_subnet
   name              = "${var.vpc_short_name}-${each.key}"
   availability_zone = each.value.availability_zone
   cidr_block        = each.value.cidr_block
