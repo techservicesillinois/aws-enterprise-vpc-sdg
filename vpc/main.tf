@@ -19,12 +19,9 @@ terraform {
       version = "~> 2.2"
     }
   }
-
-  # README: Must opt in to optional attributes experimental feature.
-  experiments = [module_variable_optional_attrs]
-
-  # see backend.tf for remote state configuration
 }
+
+# See backend.tf for remote state configuration.
 
 ## Inputs (specified in terraform.tfvars)
 
@@ -63,10 +60,10 @@ variable "assign_ipv6_address_on_creation" {
 variable "subnets_by_availability_zone_suffix" {
   description = "Maps availability zone suffix (e.g. 'a' for us-east-2a) to subnet key to subnet details"
   type = map(map(object({
-        type         = string
-        cidr_block   = string
-        tags_subnet  = optional(map(string))
-      })))
+    type        = string
+    cidr_block  = string
+    tags_subnet = optional(map(string))
+  })))
 }
 
 variable "use_transit_gateway" {
@@ -110,7 +107,7 @@ variable "pcx_ids" {
 
 variable "tags" {
   description = "Optional custom tags for all taggable resources"
-  type        = map
+  type        = map(any)
   default     = {}
 }
 
