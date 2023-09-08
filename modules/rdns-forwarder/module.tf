@@ -300,7 +300,7 @@ resource "aws_instance" "forwarder" {
     # Terraform when a new AMI is released.  Note that yum update will still
     # get the latest packages regardless of which AMI we start from; see
     # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/amazon-linux-ami-basics.html#repository-config
-    ignore_changes = [ami]
+    ignore_changes = [ami, private_ip]
   }
 
   # However, do force replacement if instance_architecture changes.
