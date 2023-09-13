@@ -27,6 +27,12 @@ variable "core_services_resolvers" {
   default     = []
 }
 
+variable "encrypted" {
+  description = "Set true to encrypt the root EBS volume"
+  type        = bool
+  default     = false
+}
+
 # fail on empty core_services_resolvers if chosen option requires it
 locals {
   # workaround for lack of assertions https://github.com/hashicorp/terraform/issues/15469
@@ -105,7 +111,7 @@ module "rdns-a" {
 
   instance_type           = "t4g.micro"
   instance_architecture   = "arm64"
-  encrypted               = false
+  encrypted               = var.encrypted
   core_services_resolvers = var.core_services_resolvers
   subnet_id               = module.public-facing-subnet["public1-a-net"].id
 
@@ -146,7 +152,7 @@ module "rdns-b" {
 
   instance_type           = "t4g.micro"
   instance_architecture   = "arm64"
-  encrypted               = false
+  encrypted               = var.encrypted
   core_services_resolvers = var.core_services_resolvers
   subnet_id               = module.public-facing-subnet["public1-b-net"].id
 
