@@ -49,8 +49,8 @@ output "id" {
 # Elastic IP for NAT Gateway
 
 resource "aws_eip" "nat_eip" {
-  tags = merge(var.tags, var.tags_eip)
-  vpc  = true
+  tags   = merge(var.tags, var.tags_eip)
+  domain = "vpc"
 }
 
 # NAT Gateway
