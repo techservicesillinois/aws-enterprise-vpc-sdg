@@ -285,8 +285,12 @@ module "nat" {
 # create it even if we don't need it.
 
 resource "aws_egress_only_internet_gateway" "eigw" {
-  # note: tags not supported
   vpc_id = aws_vpc.vpc.id
+
+  tags = merge(var.tags, {
+    Name = "${var.vpc_short_name}-eigw"
+  })
+
 }
 
 # create a VPN Gateway with a VPN Connection to each of the Customer Gateways
